@@ -1,0 +1,49 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'com.github.johnrengelman.shadow'
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:5.2.0'
+    }
+}
+
+group project.pluginGroup
+version project.pluginVersion
+
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+jar{ archivesBaseName = project.pluginId }
+
+repositories {
+    mavenCentral()
+    maven {
+        name = 'spigotmc-repo'
+        url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+    }
+    maven {
+        name = 'sonatype'
+        url = 'https://oss.sonatype.org/content/groups/public/'
+    }
+}
+
+dependencies {
+    compileOnly 'org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT'
+    compile 'com.rabbitmq:amqp-client:5.4.0'
+}
+
+shadowJar {
+    dependencies {
+        include(dependency('com.rabbitmq:amqp-client:5.4.0'))
+    }
+}
+
+processResources {
+    from(sourceSets.main.resources.srcDirs) {
+        expand 'version': project.version
+    }
+}

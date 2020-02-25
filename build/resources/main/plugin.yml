@@ -1,0 +1,4 @@
+name: AurionchatAnnounce
+version: 1.0-SNAPSHOT
+main: com.mineaurion.aurionchatannounce.AurionchatAnnounce
+depend: []

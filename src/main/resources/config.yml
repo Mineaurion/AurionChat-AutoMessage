@@ -1,0 +1,19 @@
+# Announcer for AurionChat
+
+#Delay in second between announce
+delay: 180
+
+#Prefix for all announce
+prefix: ""
+
+rabbitmq:
+  uri: "amqp://guest:guest@localhost:5672/"
+
+announcements:
+  #You can use it for based language announcement for example
+  auto-fr:
+    - "Annonce 1"
+    - "Annonce 2"
+  auto-en:
+    - "Annonce 1 en"
+    - "Annonce 2 en"

@@ -1,0 +1,4 @@
+name: AurionchatAnnounce
+version: ${version}
+main: com.mineaurion.aurionchatautomessage.AurionchatAutoMessage
+depend: []
