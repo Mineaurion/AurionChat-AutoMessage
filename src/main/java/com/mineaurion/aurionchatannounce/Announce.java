@@ -29,7 +29,7 @@ public class Announce {
                 List<String> announcements = config.getAnnouncements(channel);
                 int currentNm = nm.get(channel);
                 try {
-                    plugin.getChatService().send("aurion.automessage." + channel, announcements.get(currentNm));
+                    plugin.getChatService().send("aurion.automessage." + channel, config.getPrefix() + announcements.get(currentNm));
                 } catch (Exception e){
                     System.out.println("Error lors de l'envoie du message vers rabbitmq");
                     System.out.println(e.getStackTrace());
