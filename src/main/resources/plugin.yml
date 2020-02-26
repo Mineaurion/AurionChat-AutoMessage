@@ -1,4 +1,4 @@
-name: AurionchatAnnounce
+name: AurionchatAutoMessage
 version: ${version}
-main: com.mineaurion.aurionchatautomessage.AurionchatAutoMessage
+main: com.mineaurion.aurionchatannounce.AurionchatAutoMessage
 depend: []

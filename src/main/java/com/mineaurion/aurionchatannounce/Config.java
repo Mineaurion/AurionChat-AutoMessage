@@ -16,7 +16,7 @@ public class Config {
     }
 
     public String getUri() {
-        return config.getString("rabbitmq.url");
+        return config.getString("rabbitmq.uri");
     }
 
     /**
