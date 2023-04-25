@@ -5,6 +5,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.List;
 
+
 public class Config {
 
     public FileConfiguration config;
@@ -37,8 +38,8 @@ public class Config {
         return config.getConfigurationSection("announcements");
     }
 
-    public List<String> getAnnouncements(String key) {
-        return config.getStringList("announcements." + key);
+    public List<List<String>> getAnnouncements(String key){
+        return (List<List<String>>) config.getList("announcements." + key);
     }
 
 

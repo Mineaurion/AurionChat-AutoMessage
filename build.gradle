@@ -1,49 +1,62 @@
-apply plugin: 'java'
-apply plugin: 'maven'
-apply plugin: 'com.github.johnrengelman.shadow'
-buildscript {
-    repositories {
-        jcenter()
-    }
-
-    dependencies {
-        classpath 'com.github.jengelman.gradle.plugins:shadow:5.2.0'
-    }
+plugins {
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
+    id 'java'
+    id 'java-library'
 }
-
-group project.pluginGroup
-version project.pluginVersion
-
-sourceCompatibility = '1.8'
-targetCompatibility = '1.8'
-
-jar{ archivesBaseName = project.pluginId }
 
 repositories {
     mavenCentral()
     maven {
         name = 'spigotmc-repo'
-        url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+        url =  'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+        content {
+            includeGroup 'org.bukkit'
+            includeGroup 'org.spigotmc'
+        }
     }
-    maven {
-        name = 'sonatype'
-        url = 'https://oss.sonatype.org/content/groups/public/'
-    }
+    maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
+    maven { url = 'https://oss.sonatype.org/content/repositories/central' }
 }
 
 dependencies {
-    compileOnly 'org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT'
-    compile 'com.rabbitmq:amqp-client:5.4.0'
+    compileOnly 'org.spigotmc:spigot-api:1.19.4-R0.1-SNAPSHOT'
+    api 'com.rabbitmq:amqp-client:5.14.2'
 }
 
-shadowJar {
-    dependencies {
-        include(dependency('com.rabbitmq:amqp-client:5.4.0'))
+tasks.withType(JavaCompile).tap {
+    configureEach {
+        options.encoding = 'UTF-8'
     }
 }
 
+group = project.pluginGroup
+version = project.pluginVersion
+
+build.dependsOn shadowJar
+
+java {
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+}
+
+jar{
+    archivesBaseName = project.jarName
+}
+
+shadowJar {
+    minimize()
+    dependencies {
+        include(dependency('com.rabbitmq:amqp-client:.*'))
+    }
+
+    relocate 'com.rabbitmq', 'com.mineaurion.aurionchatannounce.lib.rabbitmq'
+}
+
 processResources {
+    duplicatesStrategy = 'include'
     from(sourceSets.main.resources.srcDirs) {
         expand 'version': project.version
     }
 }
+
+

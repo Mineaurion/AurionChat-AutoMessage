@@ -12,8 +12,12 @@ rabbitmq:
 announcements:
   #You can use it for based language announcement for example
   auto-fr:
-    - "Annonce 1"
-    - "Annonce 2"
+    - - "Annonce 1"
+      - "Sub annonce 1"
+      - "Sub annonce 2"
+    - - "Annonce 2"
   auto-en:
-    - "Annonce 1 en"
-    - "Annonce 2 en"
+    - - "Annonce 1 en"
+      - "Sub annonce 1 en"
+      - "Sub annonce 2 en"
+    - - "Annonce 2 en"

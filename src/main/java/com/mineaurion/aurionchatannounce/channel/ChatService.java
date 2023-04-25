@@ -1,9 +1,9 @@
 package com.mineaurion.aurionchatannounce.channel;
 
 import com.google.gson.JsonObject;
-import com.mineaurion.aurionchatannounce.AurionchatAutoMessage;
-import com.rabbitmq.client.*;
-import org.bukkit.Bukkit;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -12,35 +12,20 @@ import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.TimeoutException;
 
 public class ChatService {
-
-    private AurionchatAutoMessage plugin;
-
-    private Connection connection;
-    private Channel channel;
+    private final Connection connection;
+    private final Channel channel;
     private String consumerTag;
 
     private static String EXCHANGE_NAME = "aurion.chat";
 
-    public ChatService(AurionchatAutoMessage plugin){
-        this.plugin = plugin;
+    public ChatService(String uri) throws KeyManagementException, URISyntaxException, NoSuchAlgorithmException, IOException, TimeoutException {
         ConnectionFactory factory = new ConnectionFactory();
-        try{
-            factory.setUri(plugin.getConfigFile().getUri());
-        }
-        catch (KeyManagementException|URISyntaxException|NoSuchAlgorithmException UriKeyException){
-            deactivatePlugin();
-            System.out.println("Uri Syntax Exception, please check the config or the documentation of rabbitmq");
-        }
+        factory.setUri(uri);
         factory.setAutomaticRecoveryEnabled(true);
         factory.setNetworkRecoveryInterval(5000);
-        try{
-            connection = factory.newConnection();
-            channel = connection.createChannel();
-        }
-        catch (IOException|TimeoutException exception){
-            System.out.println("Connection error with rabbitmq");
-            System.out.println(exception.getMessage());
-        }
+
+        connection = factory.newConnection();
+        channel = connection.createChannel();
     }
 
     public void send(String routingKey,String message) throws IOException {
@@ -53,9 +38,4 @@ public class ChatService {
         channel.close();
         connection.close();
     }
-
-    public void deactivatePlugin() {
-        Bukkit.getPluginManager().disablePlugin(plugin);
-    };
-
 }
