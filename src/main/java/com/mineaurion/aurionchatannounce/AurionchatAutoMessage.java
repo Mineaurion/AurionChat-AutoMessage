@@ -1,6 +1,8 @@
 package com.mineaurion.aurionchatannounce;
 
 import com.mineaurion.aurionchatannounce.channel.ChatService;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -22,10 +24,13 @@ public class AurionchatAutoMessage extends JavaPlugin {
     // Map to know last announce was sent.
     private final Map<String, Integer> lastAnnounceIndex = new HashMap<>();
 
+    private MiniMessage miniMessage;
+
     @Override
     public void onEnable() {
         sendConsoleMessage("&8[&eAurionChat AutoMessage&8]&e - Initializing...");
         config = new Config(this);
+        miniMessage = MiniMessage.miniMessage();
         try{
             chatService = new ChatService(config.getUri());
         } catch (IOException | TimeoutException | KeyManagementException | URISyntaxException | NoSuchAlgorithmException exception){
@@ -50,20 +55,22 @@ public class AurionchatAutoMessage extends JavaPlugin {
 
     private void schedule() {
         for(String channel: config.getAnnouncementsChannel().getKeys(false)){
-            Bukkit.getScheduler().scheduleSyncRepeatingTask(this, ()-> {
-                List<List<String>> announcements = config.getAnnouncements(channel);
+            Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
+                List<String> announcements = config.getAnnouncements(channel);
+
                 lastAnnounceIndex.putIfAbsent(channel, 0);
                 int currentIndex = lastAnnounceIndex.get(channel);
-                List<String> announcementToProcess = announcements.get(currentIndex);
-                for(String lineMessage: announcementToProcess){
-                    try {
-                        chatService.send("aurion.automessage." + channel, config.getPrefix() + lineMessage);
-                    } catch (Exception e){
-                        System.out.println("Error when sending message to rabbitmq");
-                        System.out.println(e.getStackTrace());
-                    }
-                    sendConsoleMessage(config.getPrefix() + lineMessage);
+
+                Component prefix = miniMessage.deserialize(config.getPrefix());
+                Component announcementDeserialize = miniMessage.deserialize(announcements.get(currentIndex));
+                try {
+                    chatService.send(channel, prefix.append(announcementDeserialize));
+                } catch (Exception e){
+                    System.out.println("Error when sending message to rabbitmq");
+                    System.out.println(e.getStackTrace());
                 }
+                sendConsoleMessage(config.getPrefix() + announcementDeserialize);
+
                 ++currentIndex;
                 if(currentIndex >= announcements.size()){
                     currentIndex = 0;
