@@ -5,7 +5,6 @@ import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.List;
 
-
 public class Config {
 
     public FileConfiguration config;
@@ -34,12 +33,12 @@ public class Config {
     }
 
     public ConfigurationSection getAnnouncementsChannel() {
-
         return config.getConfigurationSection("announcements");
     }
 
-    public List<List<String>> getAnnouncements(String key){
-        return (List<List<String>>) config.getList("announcements." + key);
+    @SuppressWarnings("unchecked")
+    public List<String> getAnnouncements(String key){
+        return (List<String>) config.getList("announcements." + key);
     }
 
 

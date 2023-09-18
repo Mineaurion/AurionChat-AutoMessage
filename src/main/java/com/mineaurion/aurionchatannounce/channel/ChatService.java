@@ -4,6 +4,8 @@ import com.google.gson.JsonObject;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -28,11 +30,13 @@ public class ChatService {
         channel = connection.createChannel();
     }
 
-    public void send(String routingKey,String message) throws IOException {
+    public void send(String channelName, Component message) throws IOException {
         JsonObject json = new JsonObject();
-        json.addProperty("message", message);
+        json.addProperty("channel", channelName);
+        json.addProperty("type", "automessage");
+        json.addProperty("message", GsonComponentSerializer.gson().serialize(message));
 
-        channel.basicPublish(EXCHANGE_NAME, routingKey, null, json.toString().getBytes());
+        channel.basicPublish(EXCHANGE_NAME, "" , null, json.toString().getBytes());
     }
     public void close() throws TimeoutException, IOException{
         channel.close();

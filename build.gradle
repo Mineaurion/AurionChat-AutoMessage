@@ -8,19 +8,27 @@ repositories {
     mavenCentral()
     maven {
         name = 'spigotmc-repo'
-        url =  'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
-        content {
-            includeGroup 'org.bukkit'
-            includeGroup 'org.spigotmc'
-        }
+        url = 'https://hub.spigotmc.org/nexus/content/groups/public/'
     }
+    maven {
+        name = 'sonatype'
+        url = 'https://oss.sonatype.org/content/groups/public/'
+
+    }
+    maven { url = 'https://repo.papermc.io/repository/maven-public/' }
     maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
     maven { url = 'https://oss.sonatype.org/content/repositories/central' }
 }
 
 dependencies {
-    compileOnly 'org.spigotmc:spigot-api:1.19.4-R0.1-SNAPSHOT'
-    api 'com.rabbitmq:amqp-client:5.14.2'
+    compileOnly("io.papermc.paper:paper-api:1.20.1-R0.1-SNAPSHOT")
+
+    api 'com.google.code.gson:gson:2.8.9'
+    api 'com.rabbitmq:amqp-client:5.18.0'
+
+    api('net.kyori:adventure-api:4.14.0')
+    api('net.kyori:adventure-text-serializer-gson:4.14.0')
+    api("net.kyori:adventure-text-minimessage:4.14.0")
 }
 
 tasks.withType(JavaCompile).tap {
@@ -35,21 +43,12 @@ version = project.pluginVersion
 build.dependsOn shadowJar
 
 java {
-    sourceCompatibility = 1.8
-    targetCompatibility = 1.8
+    sourceCompatibility = 17
+    targetCompatibility = 17
 }
 
 jar{
     archivesBaseName = project.jarName
-}
-
-shadowJar {
-    minimize()
-    dependencies {
-        include(dependency('com.rabbitmq:amqp-client:.*'))
-    }
-
-    relocate 'com.rabbitmq', 'com.mineaurion.aurionchatannounce.lib.rabbitmq'
 }
 
 processResources {
@@ -59,4 +58,12 @@ processResources {
     }
 }
 
+artifacts {
+    archives shadowJar
+}
 
+shadowJar {
+    relocate 'com.rabbitmq', 'com.mineaurion.aurionchatannounce.lib.rabbitmq'
+    relocate 'com.google', 'com.mineaurion.aurionchatannounce.lib.google'
+    relocate 'net.kyori.adventure', 'com.mineaurion.aurionchatannounce.lib.adventure'
+}
