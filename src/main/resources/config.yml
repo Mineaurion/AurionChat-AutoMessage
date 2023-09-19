@@ -13,13 +13,10 @@ rabbitmq:
 announcements:
   #You can use it for based language announcement for example
   # Use the miniMessage format from kyori - more info -> https://docs.advntr.dev/minimessage/format.html
-  auto-fr:
-    - "Annonce 1"
-    - "Annonce 2"
   auto-en:
     - "Annonce 1 en"
     - "Annonce 2 en"
-  auto-test:
+  auto-fr:
     - '<yellow>Hello <blue>World</blue>!'
     - '<hover:show_text:"<red>test:TEST">TEST <click:run_command:test>TEST'
     - "<hover:show_text:'<red>Hover with a<newline><green>line break'>Text with<newline>line break</hover>"

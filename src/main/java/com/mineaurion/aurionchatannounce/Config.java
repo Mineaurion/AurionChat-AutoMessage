@@ -10,7 +10,6 @@ public class Config {
     public FileConfiguration config;
 
     public Config(AurionchatAutoMessage plugin) {
-        plugin.getConfig().options().copyDefaults(true);
         plugin.saveDefaultConfig();
         config = plugin.getConfig();
     }
