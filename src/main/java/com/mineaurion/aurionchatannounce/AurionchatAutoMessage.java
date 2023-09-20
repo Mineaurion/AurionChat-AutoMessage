@@ -4,7 +4,6 @@ import com.mineaurion.aurionchatannounce.channel.ChatService;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
@@ -28,7 +27,7 @@ public class AurionchatAutoMessage extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        sendConsoleMessage("&8[&eAurionChat AutoMessage&8]&e - Initializing...");
+        getLogger().info("[Aurionchat Automessage] - Initializing...");
         config = new Config(this);
         miniMessage = MiniMessage.miniMessage();
         try{
@@ -39,7 +38,7 @@ public class AurionchatAutoMessage extends JavaPlugin {
             Bukkit.getPluginManager().disablePlugin(this);
         }
         schedule();
-        sendConsoleMessage("&8[&eAurionChat AutoMessage&8]&e - Enabled Successfully");
+        getLogger().info("[Aurionchat Automessage] - Enabled Successfully");
     }
 
     @Override
@@ -48,8 +47,8 @@ public class AurionchatAutoMessage extends JavaPlugin {
             chatService.close();
         }
         catch(Exception e){
-            sendConsoleMessage("&8[&eAurionChat AutoMessage&8]&e - Error when communication closed");
-            sendConsoleMessage(e.getMessage());
+            getLogger().severe("[Aruionchat AutoMessage - Error when communication closed");
+            getLogger().severe(e.getMessage());
         }
     }
 
@@ -66,10 +65,9 @@ public class AurionchatAutoMessage extends JavaPlugin {
                 try {
                     chatService.send(channel, prefix.append(announcementDeserialize));
                 } catch (Exception e){
-                    System.out.println("Error when sending message to rabbitmq");
-                    System.out.println(e.getStackTrace());
+                    getLogger().severe("Error when sending message to rabbitmq");
+                    getLogger().severe(e.getMessage());
                 }
-                sendConsoleMessage(config.getPrefix() + announcementDeserialize);
 
                 ++currentIndex;
                 if(currentIndex >= announcements.size()){
@@ -78,9 +76,5 @@ public class AurionchatAutoMessage extends JavaPlugin {
                 lastAnnounceIndex.replace(channel, currentIndex);
             }, config.getDelay(), config.getDelay());
         }
-    }
-
-    public void sendConsoleMessage(String message){
-        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', message));
     }
 }
